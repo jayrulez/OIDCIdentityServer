@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using OIDCIdentityServer.Server.Data;
 
 namespace OIDCIdentityServer.Server.Controllers
 {
