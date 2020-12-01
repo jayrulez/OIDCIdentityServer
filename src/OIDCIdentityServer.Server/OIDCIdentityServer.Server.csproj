@@ -5,14 +5,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-WebApplication1-FAB983E3-B367-466E-893C-2BF0A310E37B</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="appsettings.json.dist" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="appsettings.json.dist" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.0" />
@@ -21,7 +13,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="3.0.0-rc1.20567.82" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="3.0.0-rc1.20567.82" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\AdminApi\Models\" />
   </ItemGroup>
 </Project>

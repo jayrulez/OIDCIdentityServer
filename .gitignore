@@ -44,4 +44,4 @@ UpgradeLog.htm
 .idea
 
 # Project
-src/**/appsettings*.json
+src/**/appsettings.*.json
