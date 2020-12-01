@@ -1,0 +1,13 @@
+﻿{
+  "ConnectionStrings": {
+    "DefaultConnection": "User ID=postgres;Password=password;Server=localhost;Port=5432;Database=oidc_identity_server;Pooling=true;"
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
