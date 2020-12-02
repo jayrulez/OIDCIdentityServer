@@ -7,8 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using OIDCIdentityServer.Server.Data;
 using OIDCIdentityServer.Server.Services;
+using System;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OIDCIdentityServer.Server
@@ -81,6 +83,7 @@ namespace OIDCIdentityServer.Server
                            .SetDeviceEndpointUris("/connect/device")
                            .SetLogoutEndpointUris("/connect/logout")
                            .SetTokenEndpointUris("/connect/token")
+                           .SetIntrospectionEndpointUris("/connect/introspect")
                            .SetUserinfoEndpointUris("/connect/userinfo")
                            .SetVerificationEndpointUris("/connect/verify");
 
@@ -89,14 +92,24 @@ namespace OIDCIdentityServer.Server
                     options.AllowAuthorizationCodeFlow()
                            .AllowDeviceCodeFlow()
                            .AllowPasswordFlow()
-                           .AllowRefreshTokenFlow();
+                           .AllowRefreshTokenFlow()
+                           .AllowImplicitFlow();
 
                     // Mark the supported scopes.
-                    options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, "oidc_admin_server_api", "test_api");
+                    options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, "oidc_admin_server_api", "test_api", "api1", "api2");
 
                     // Register the signing and encryption credentials.
-                    options.AddDevelopmentEncryptionCertificate()
+                    options.AddDevelopmentEncryptionCertificate() // todo: check if this can be used along with symmetric encryption
                            .AddDevelopmentSigningCertificate();
+
+                    // Register the encryption credentials. This sample uses a symmetric
+                    // encryption key that is shared between the server and the Api2 sample
+                    // (that performs local token validation instead of using introspection).
+                    //
+                    // Note: in a real world application, this encryption key should be
+                    // stored in a safe place (e.g in Azure KeyVault, stored as a secret).
+                    options.AddEncryptionKey(new SymmetricSecurityKey(
+                        Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
 
                     // Force client applications to use Proof Key for Code Exchange (PKCE).
                     options.RequireProofKeyForCodeExchange();
@@ -143,6 +156,8 @@ namespace OIDCIdentityServer.Server
                     // "demo_api" scope, which is used by ResourceController.
                     options.AddAudiences("oidc_admin_server");
                     options.AddAudiences("test_server");
+                    options.AddAudiences("sample_api1");
+                    options.AddAudiences("sample_api2");
 
                     // Import the configuration from the local OpenIddict server instance.
                     options.UseLocalServer();
@@ -166,7 +181,7 @@ namespace OIDCIdentityServer.Server
             })
             .AddIdentityCookies(o => { });
 
-
+            services.AddCors();
             services.AddMvc();
 
             // Add application services.
@@ -187,15 +202,29 @@ namespace OIDCIdentityServer.Server
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 // app.UseHsts();
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //app.UseCors(builder =>
+            //{
+            //    builder.WithOrigins("https://localhost:44398");
+            //    builder.WithMethods("GET");
+            //    builder.WithHeaders("Authorization");
+            //});
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

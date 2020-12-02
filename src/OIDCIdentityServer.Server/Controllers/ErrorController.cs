@@ -7,6 +7,8 @@ namespace OIDCIdentityServer.Server.Controllers
 {
     public class ErrorController : Controller
     {
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [HttpGet, HttpPost, Route("~/error")]
         public IActionResult Error()
         {

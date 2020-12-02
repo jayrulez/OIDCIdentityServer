@@ -99,6 +99,50 @@ namespace OIDCIdentityServer.Server
                 }
             });
 
+            applications.Add(new OpenIddictApplicationDescriptor
+            {
+                ClientId = "sample_api1",
+                ClientSecret = "secret_secret_secret",
+                Permissions =
+                {
+                    Permissions.Endpoints.Introspection
+                }
+            });
+
+            applications.Add(new OpenIddictApplicationDescriptor
+            {
+                ClientId = "blazor_client",
+                ConsentType = ConsentTypes.Explicit,
+                DisplayName = "Blazor client application",
+                Type = ClientTypes.Public,
+                PostLogoutRedirectUris =
+                {
+                    new Uri("https://localhost:9101/authentication/logout-callback")
+                },
+                RedirectUris =
+                {
+                    new Uri("https://localhost:9101/authentication/login-callback")
+                },
+                Permissions =
+                {
+                    Permissions.Endpoints.Authorization,
+                    Permissions.Endpoints.Logout,
+                    Permissions.Endpoints.Token,
+                    Permissions.GrantTypes.AuthorizationCode,
+                    Permissions.GrantTypes.RefreshToken,
+                    Permissions.ResponseTypes.Code,
+                    Permissions.Scopes.Email,
+                    Permissions.Scopes.Profile,
+                    Permissions.Scopes.Roles,
+                    Permissions.Prefixes.Scope + "api1",
+                    Permissions.Prefixes.Scope + "api2",
+                },
+                Requirements =
+                {
+                    Requirements.Features.ProofKeyForCodeExchange
+                }
+            });
+
             return applications;
         }
 
@@ -124,6 +168,24 @@ namespace OIDCIdentityServer.Server
                 Resources =
                 {
                     "test_server"
+                }
+            });
+
+            scopes.Add(new OpenIddictScopeDescriptor
+            {
+                Name = "api1",
+                Resources =
+                {
+                    "sample_api1"
+                }
+            });
+
+            scopes.Add(new OpenIddictScopeDescriptor
+            {
+                Name = "api2",
+                Resources =
+                {
+                    "sample_api2"
                 }
             });
 

@@ -11,13 +11,14 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace SampleMvcClient
 {
-    public class OpenIdConnectOptions
+    public class OpenIdConnectClientOptions
     {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string Authority { get; set; }
         public List<string> Scopes { get; set; }
     }
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -40,7 +41,7 @@ namespace SampleMvcClient
                 options.LoginPath = "/login";
             }).AddOpenIdConnect(options =>
             {
-                var oidcOptions = Configuration.GetSection("OpenIdConnectOptions").Get<OpenIdConnectOptions>();
+                var oidcOptions = Configuration.GetSection(nameof(OpenIdConnectClientOptions)).Get<OpenIdConnectClientOptions>();
 
                 // Note: these settings must match the application details
                 // inserted in the database at the server level.

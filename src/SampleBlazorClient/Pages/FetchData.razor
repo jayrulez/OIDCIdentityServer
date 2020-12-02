@@ -1,0 +1,67 @@
+﻿@page "/fetchdata"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
+@inject IHttpClientFactory ClientFactory
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (!loaded)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Api1</h3>
+    <p>
+        <dl>
+            <dt>Private</dt>
+            <dd>@Api1PrivateResponse</dd>
+            <dt>Public</dt>
+            <dd>@Api1PublicResponse</dd>
+        </dl>
+    </p>
+    <h3>Api2</h3>
+    <p>
+        <dl>
+            <dt>Private</dt>
+            <dd>@Api2PrivateResponse</dd>
+            <dt>Public</dt>
+            <dd>@Api2PublicResponse</dd>
+        </dl>
+    </p>
+}
+
+@code {
+    private bool loaded = false;
+    private string Api1PrivateResponse;
+    private string Api1PublicResponse;
+    private string Api2PrivateResponse;
+    private string Api2PublicResponse;
+
+    private HttpClient Api1Client;
+    private HttpClient Api2Client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Api1Client = ClientFactory.CreateClient("SampleApi1");
+            Api2Client = ClientFactory.CreateClient("SampleApi2");
+
+            Api1PrivateResponse = await Api1Client.GetStringAsync("resource/private");
+            Api1PublicResponse = await Api1Client.GetStringAsync("resource/public");
+
+            Api2PrivateResponse = await Api2Client.GetStringAsync("resource/private");
+            Api2PublicResponse = await Api2Client.GetStringAsync("resource/public");
+
+            loaded = true;
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+    }
+}

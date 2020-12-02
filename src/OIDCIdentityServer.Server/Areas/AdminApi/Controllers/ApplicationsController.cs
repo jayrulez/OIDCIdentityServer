@@ -11,13 +11,43 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OIDCIdentityServer.Server.Areas.AdminApi.Controllers
 {
-    [Route("admin_api")]
+    //[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Roles = "OIDCAdmin")]
+    [Route("admin_api/applications")]
     public class ApplicationsController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOpenIddictApplicationManager _applicationManager;
 
-        public ApplicationsController(UserManager<ApplicationUser> userManager)
-            => _userManager = userManager;
+        public ApplicationsController(UserManager<ApplicationUser> userManager, IOpenIddictApplicationManager applicationManager)
+        {
+            _userManager = userManager;
+            _applicationManager = applicationManager;
+        }
+
+        public IActionResult GetApplications(int? page = 1)
+        {
+            int pageSize = 20;
+            int pageNumber = page != null && page > 0 ? page.Value : 1;
+
+            var applications = _applicationManager.ListAsync(pageSize, (pageNumber -1) * pageSize);
+
+            return Ok(applications);
+        }
+
+        void GetApplication()
+        {
+
+        }
+
+        void CreateApplication()
+        {
+
+        }
+
+        void UpdateApplication()
+        {
+
+        }
 
         [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpGet("message")]
